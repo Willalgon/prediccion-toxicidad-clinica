@@ -1,39 +1,52 @@
 # DeepTox: Modelado Predictivo de Toxicidad Clínica mediante Deep Learning
 
-## 1. Resumen Ejecutivo
-La industria farmacéutica se enfrenta a un desafío crítico en el descubrimiento de fármacos: aproximadamente el 90% de los candidatos a fármacos fallan durante los ensayos clínicos, siendo la toxicidad no detectada la causa principal. Este proyecto implementa una Red Neuronal Profunda (DNN) diseñada para predecir la toxicidad clínica de pequeñas moléculas. Al actuar como una herramienta de cribado virtual, este modelo tiene como objetivo reducir los costes de I+D y mitigar los riesgos antes de que los compuestos entren en la fase clínica.
+## 1. Resumen Ejecutivo y definición del problema
+Este proyecto trata de farmacovigilancia predictiva. En el desarrollo de fármacos y medicamentos, muchos fallan ya que resultan ser dañinos y y tóxicos para el cuerpo humano en el momento que se llega a la fase clínica de pruebas con personas. El análisis tratará de una clasificación binaria:
+- Clase 0: el fármaco superó los ensayos clínicos (es seguro)
+- Clase 1: el fármaco no superó los ensayos clínicos (es tóxico)
 
-## 2. Definición del Problema
-La evaluación manual de la toxicidad molecular es costosa y requiere mucho tiempo. El objetivo es desarrollar un clasificador binario capaz de distinguir entre compuestos que probablemente superen los estándares de seguridad de la FDA y aquellos con probabilidad de fracaso debido a problemas toxicológicos.
+El modelo deberá de aprender de una nueva molécula y decidir la probabilidad de toxicidad.
+
+## 2. Metodología e implementación
+Seguiremos este orden de trabajo:
+    1. data_loader.py: leeremos los datos y los transformaremos. 
+    2. model.py: definiremos la estructura de nuestra red neuronal (capas, neuronas, ReLUs...)
+    3. train.py: unimos data_loader y model.py para crear un bucle de entrenamiento y hacer que la red aprenda.
+    4. evaluate.py: tras entrenar el modelo, evaluaremos el modelo para datos desconocidos. 
 
 ## 3. Especificaciones del Dataset
-El modelo utiliza el conjunto de datos **ClinTox**, un referente en el repositorio MoleculeNet.
-* **Observaciones:** ~1,500 compuestos químicos.
-* **Características:** Descriptores moleculares y huellas dactilares (ECFP4/Morgan Fingerprints) derivados de cadenas SMILES (Simplified Molecular Input Line Entry System).
-* **Variable Objetivo:** `CT_TOX` (Binaria: 0 para seguro/no tóxico, 1 para tóxico/fracaso clínico).
+El dataset como podemos ver contiene simbología extraña. Esto se denomina SMILES.
+Los ordenadores no saben ver imagenes de moléculas 3D, por lo tanto los químicos inventaron este lenguaje de texto para representar estructuras. 
+- Las letras son átomos (C es cabrono, O es oxígeno)
+- Los números representan dónde se cierran los anillos
+- Los símbolos como = o # represetan enlaces dobles o triples.
 
-## 4. Arquitectura Técnica
-La implementación sigue una arquitectura de Perceptrón Multicapa (MLP):
+El problema es que las redes neuronales no entienden estos textos SMILES, por ello en data_loader usaremos RDKit para convertir este texto en un vector de números (ceros y unos) llamado Morgan Fingerprint. Diríamos que es como el DNI numérico de la molécula.
 
-* **Capa de Entrada:** Vector de alta dimensión que representa las huellas dactilares moleculares.
-* **Capas Ocultas:** Dos capas totalmente conectadas (fully connected) con funciones de activación **ReLU (Rectified Linear Unit)** para capturar relaciones químicas no lineales.
-* **Capa de Salida:** Una única neurona con función de activación **Sigmoide** para la clasificación probabilística.
-* **Función de Pérdida:** **Entropía Cruzada Binaria (BCE)**, elegida por su eficiencia en tareas de clasificación binaria.
-* **Optimitzador:** Adam, con tasa de aprendizaje adaptativa.
+Estos datos son compuestos químicos reales extraidos de ensayos clínicos de la FDA estadounidense.
+Abarca moléculas pequeñas como la aspirina y el paracetamol que han sido testeadas en humanos.
 
-## 5. Metodología e Implementación
-1. **Preprocesamiento de Datos:** Conversión de cadenas SMILES en representaciones numéricas utilizando RDKit.
-2. **Entrenamiento del Modelo:** Actualización iterativa de pesos mediante retropropagación (backpropagation) para minimizar la función de coste.
-3. **Estrategia de Validación:** División de datos 80/20 (entrenamiento/prueba) con muestreo estratificado para corregir posibles desequilibrios de clase.
-4. **Métricas de Rendimiento:** Además de la precisión estándar, el modelo se evalúa mediante el Área Bajo la Curva ROC (AUC-ROC) y matrices de confusión para minimizar los Falsos Negativos (críticos en evaluaciones de seguridad).
+Cada fila del dataset es un experimento histórico. Por lo tanto, usaremos décadas de investigación médica para entrenar un modelo que pueda predecir el futuro de nuevas medicinas. 
 
-## 6. Conclusiones y Análisis
-* El modelo demuestra la viabilidad del uso de aprendizaje profundo como filtro preliminar en el embudo de descubrimiento de fármacos.
-* El análisis de la importancia de las características (gradientes) indica que subestructuras moleculares específicas están altamente correlacionadas con el fracaso clínico.
+Como podeis ver, el dataset está compuesto por 3 columnas:
+    1. smiles: lo que ya hemos comentado, la cadena de texto que representa la estructura de la molécula.
+    2. FDA_APPROVED: indica si la molécula fue aprobada por la FDA o no. Esta sería nuestra etiqueta 1
+    3. CT_TOX: indica si la molécula falló específicamente por toxicidad en ensayos clínicos. Esta será nuestra etiqueta objetivo. 
 
-## 7. Requisitos Técnicos
+## 4. Conclusiones y Análisis
+NOS ENFRENTAMOS A UN GRAN PROBLEMA:
+En ClinTox, la gran mayoría de las filas son de clase 0. Hay muy pocas moléculas identificadas como tóxicas (clase 1).
+Esto puede hacer que la neurona dando clase 0 siempre, obtenga un éxito del 90%
+De este modo, tendremos que usar métricas como precision-recall o el AUC-ROC para demostrar que nuestro modelo realmente indentifica los casos tóxicos y no solo está adivinando lo más frecuente.
+
+
+## 5. Requisitos Técnicos
 * Python 3.x
-* TensorFlow / Keras
+* Pytorch
 * RDKit
-* Pandas / NumPy
+* Pandas
+* NumPy
 * Scikit-Learn
+* matplotlib
+* stremlit
+Se han especificado todas las dependencias y requisitos técnicos necesarios en "requirements.txt"
