@@ -41,7 +41,7 @@ class ClinToxDataset(Dataset): # obtenemos los datos, longitud, y obtenemos las 
         return x_tensor, y_tensor
 
 
-def get_dataloaders(csv_path, batch_size=32):
+def get_dataloaders(csv_path:str, batch_size=32):
     df = pd.read_csv(csv_path)
     df = df.dropna() # para eliminar de las columnas sibset las filas sin contenido
     # Dividimos
