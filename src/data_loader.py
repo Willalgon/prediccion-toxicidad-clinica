@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader # Dataset (interfaz para heredar len y getitem) # DataLoader para cargar los batches
 from sklearn.model_selection import train_test_split 
 from rdkit import Chem # Chem entiende la química de los SMILES
-from rdkit import rdMolDescriptors # Para generar los vectores Morgan Fingerprint
+from rdkit.Chem import rdMolDescriptors # Para generar los vectores Morgan Fingerprint
 
 
 class ClinToxDataset(Dataset): # obtenemos los datos, longitud, y obtenemos las muestras ya vectorizadas
