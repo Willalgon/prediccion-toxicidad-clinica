@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+.ipynb_checkpoints/
+
+# Entornos virtuales
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Datos y Modelos (Archivos pesados)
+data/
+models/*.pth
+models/*.onnx
+
+# Resultados y gráficas
+*.png
+*.jpg
+*.jpeg
+*.pdf
