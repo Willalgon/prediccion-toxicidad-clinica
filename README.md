@@ -160,7 +160,7 @@ Epoch [049/100] | Train Loss: 0.2064 | Val Loss: 0.2288
 
 ## Curva de aprendizaje
 
-![Learning Curve](models/learning_curves.png)
+![Learning Curve](assets/learning_curves.png)
 
 ---
 
@@ -178,10 +178,10 @@ He selccionado un **umbral de 0.15** sobre la predicción ya que esto ayuda a id
 
 En farmacoloǵia, si predecimos que una molécula es tóxica aunque realmente no lo sea, no es malo ya que preferimos que identifique moléculas como tóxicas pero que no lo son, que moléculas como no tóxicas cuando sí que lo son, ya que una molécula que se predice como tóxica se puede volver a estudiar más a fondo, pero lo que no es una posibilidad es dejar pasar moléculas tóxicas desapercibidas. Dicho esto, el objetivo es encontrar un **recall lo más alto posible**, pero un **trade-off balanceado**. Tampoco queremos identificar muchas moléculas no tóxicas como tóxicas.
 
-![Detailed Report](models/metrics.png)
+![Detailed Report](assets/metrics.png)
 
 ---
 
 ## Matriz de confusión
 
-![Confusion Matrix - DeepTox](models/confusion_matrix.png)
+![Confusion Matrix - DeepTox](assets/confusion_matrix.png)
