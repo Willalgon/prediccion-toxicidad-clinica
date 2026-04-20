@@ -10,38 +10,16 @@ from rdkit import Chem
 import pandas as pd
 
 def train():
-    # Tenemos que limpiar las moléculas erróneas...
-    RDLogger.logger().setLevel(RDLogger.CRITICAL)
-    print("Cleaning dataset (erroneous molecules)")
-    df_raw = pd.read_csv("data/clintox.csv")
-    # Lista donde guardaremos solo las filas que pasen el filtro
-    valid_rows = []
-    for _, row in df_raw.iterrows():
-        smiles = row['smiles']
-        mol = Chem.MolFromSmiles(smiles)
-        # si la molécula es válida la guardamos
-        if mol is not None:
-            valid_rows.append(row)
-    # Creamos el nuevo DataFrame con las filas filtradas
-    df_clean = pd.DataFrame(valid_rows).copy()
-    # Guardamos el temporal para que el DataLoader lo use
-    clean_path = "data/clintox_cleaned.csv"
-    df_clean.to_csv(clean_path, index=False)
-    print(f"Filtered dataset: {len(df_raw) - len(df_clean)} molecules removed")
-    print("------------------------------------------")
-
-    # -----  ENTRENAMIENTO ------
-
     # Hiperparámetros
     batch_size = 32
     learning_rate = 0.001
     epochs = 100
     patience = 10 # épocas que esperamos si no mejora la validación
     # cargamos datos y modelo
-    train_loader, val_loader, _ = get_dataloaders(clean_path, batch_size=batch_size)
+    train_loader, val_loader, _ = get_dataloaders("data/clintox.csv", batch_size=batch_size)
     model = DeepToxModel()
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=0.05)
     # Variables para early stopping
     best_val_loss = float('inf') # infinito positivo
     epochs_no_improve = 0
